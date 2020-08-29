@@ -1,0 +1,13 @@
+
+wb = xlsx_package.workbook
+
+wb.add_worksheet(name: "RFAs") do |sheet|
+  # this is the head row of your spreadsheet
+  sheet.add_row ['REF', 'NUMBER', 'REV', 'SUBJECT', 'ISSUED DATE', 'REQUIRED REPLY DATE', 'TO', 'REPLY DATE', 'APPROVAL DATE', 'REPLIED BY', 'STATUS', 'DAYS LAGGING','COUNT']
+
+  # each rfa is a row on your spreadsheet
+  @rfas.each do |rfa|
+    sheet.add_row [rfa.ref, rfa.number, rfa.rev, rfa.subject, rfa.issued_date, rfa.required_reply_date, rfa.to, rfa.reply_date,
+    rfa.approval_date, rfa.replied_by, rfa.status, rfa.days_lagging, rfa.count]
+  end
+end

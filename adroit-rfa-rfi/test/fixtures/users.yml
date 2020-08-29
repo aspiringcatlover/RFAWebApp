@@ -1,0 +1,25 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  name: MyString
+  role: MyString
+  trade: MyString
+  vendor: MyString
+  ref_submitted_RFA: MyString
+  ref_submitted_RFI: MyString
+  ref_assigned_RFA: MyString
+  ref_assigned_RFI: MyString
+  ref_handled_RFA: MyString
+  ref_handled_RFI: MyString
+
+two:
+  name: MyString
+  role: MyString
+  trade: MyString
+  vendor: MyString
+  ref_submitted_RFA: MyString
+  ref_submitted_RFI: MyString
+  ref_assigned_RFA: MyString
+  ref_assigned_RFI: MyString
+  ref_handled_RFA: MyString
+  ref_handled_RFI: MyString

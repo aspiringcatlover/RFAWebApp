@@ -1,0 +1,466 @@
+<style>
+          /* The side navigation menu */
+        .sidenav {
+          height: 100%; /* 100% Full-height */
+          width: 0; /* 0 width - change this with JavaScript */
+          position: fixed; /* Stay in place */
+          z-index: 1; /* Stay on top */
+          top: 0; /* Stay at the top */
+          left: 0;
+          background-color: #174485; /* Black*/
+          overflow-x: hidden; /* Disable horizontal scroll */
+          padding-top: 60px; /* Place content 60px from the top */
+          transition: 0.5s; /* 0.5 second transition effect to slide in the sidenav */
+        }
+
+        /* The navigation menu links */
+        .sidenav a {
+          padding: 8px 8px 8px 32px;
+          text-decoration: none;
+          font-size: 25px;
+          color: white;
+          display: block;
+          transition: 0.3s;
+        }
+
+        /* When you mouse over the navigation links, change their color */
+        .sidenav a:hover {
+          color: #f1f1f1;
+        }
+
+        /* Position and style the close button (top right corner) */
+        .sidenav .closebtn {
+          position: absolute;
+          top: 0;
+          right: 25px;
+          font-size: 36px;
+          margin-left: 50px;
+        }
+
+        /* Style page content - use this if you want to push the page content to the right when you open the side navigation */
+        #main {
+          transition: margin-left .5s;
+          padding: 20px;
+        }
+
+        /* On smaller screens, where height is less than 450px, change the style of the sidenav (less padding and a smaller font size) */
+        @media screen and (max-height: 450px) {
+          .sidenav {padding-top: 15px;}
+          .sidenav a {font-size: 18px;}
+        }
+
+        /* set the width of content to fill the screen more */
+        @media (min-width: 1200px) {
+          .container-fluid{
+          max-width: 1800px;
+        }
+        .container{
+          max-width: 1800px;
+        }
+}
+
+.field_with_errors {
+  color:red;
+
+}
+
+#error_explanation {
+  border-style: solid;
+  border-color: red;
+}
+
+
+</style>
+
+
+    <body>
+
+       <div id="mySidenav" class="sidenav">
+          <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+          <a href="/rfas">RFA and RFI</a>
+          <a style="font-weight: 100" href="/projects">Projects</a>
+          <a style="font-weight: 100" href="/users">Users</a>
+          <a style="font-weight: 100" href="/dashboard">RFA Dashboard</a>
+          <a style="font-weight: 100" href="/project_dashboard">Project Dashboard</a>
+      </div>
+
+        <!-- header -->
+        <div class="topnav" id = "header" style = "background-color: #174485;height: 100px !important;">
+          <a class="active" href="#adroit" style = "color: white; position: relative; left: 320px; top: 30px" >Adroit</a>
+          <span style=" color:white;font-size:25px;cursor:pointer;position: relative; left: 330px; top: 34px"  onclick="openNav()">&#9776;</span>
+        </div>
+
+        <div class = "container" id  ="main"> <br> <br>
+
+           <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+              <li class="breadcrumb-item" style = "color: #174485"><a href="<%= rfas_path %>"> Home </a></li>
+              <li class="breadcrumb-item" style = "color: #174485"><a href="<%= rfa_path(@rfa.id) %>"> <%= @rfa.ref %> </a></li>
+              <li class="breadcrumb-item active" aria-current="page">Edit</li>
+            </ol>
+          </nav>
+
+          <div style = "font-weight : bold !important">
+            <div class="header"> <br>
+              <h1 class ="title" style = "color : #174485;width: 100%; display:inline;">Editing <%= @rfa.ref %></h1>
+            </div> <br>
+              <%= form_for @rfa do |form| %>
+
+               <% if @rfa.errors.any? %>
+                  <div id="error_explanation">
+                    <h2 style = "color: red"><%= pluralize(@rfa.errors.count, "error") %> prohibited this RFA from being saved:</h2>
+
+                    <ul>
+                    <% @rfa.errors.full_messages.each do |msg| %>
+                      <li><%= msg.split(' ')[1..-1].join(' ') %></li>
+                    <% end %>
+                    </ul>
+                  </div>
+                <% end %>
+
+                          <div class = "row">
+                          <div class = "col-12 col-md-6 col-sm-6 col-xs-6">
+                          <%= form.label :project, "Project" %>
+                          </div>
+                          <div class = "col-12 col-md-6 col-sm-6 col-xs-6">
+                            <%= form.label :trade ,"Trade"%>
+
+                          </div>
+                        </div>
+                        <div class = "row">
+                          <div class = "col-12 col-md-6 col-sm-6 col-xs-6">
+                          <%= collection_select(:rfa, :project_id, Project.all, :id, :title, {:prompt=> false}, {:class=> "project_choice select2-container form-control", :style =>"width: 100%"}) %>
+                          </div>
+                          <div class = "col-12 col-md-6 col-sm-6 col-xs-6">
+                          <select class = "trade_choice select2-container form-control" name="rfa[trade]"  style="width: 100%;">
+                            <option class = "select2-choice" value="MEP" selected="selected"> MEP </option>
+                            <option  class = "select2-choice" value="ID"> ID </option>
+                            <option  class = "select2-choice" value="CS"> CS </option>
+                          </select>
+                          </div>
+                        </div> <br>
+
+                        <div class = "row">
+                          <div class = "col-12 col-sm-6">
+                            <%= form.label :request_type, "Request Type"%>
+                          </div>
+                          <div class = "col-12 col-sm-6">
+                            <%= form.label :completed, "Completed"%>
+                          </div>
+                        </div>
+                        <div class = "row">
+                          <div class = "col-12 col-sm-6">
+                            <select class = "rfa_rfi_choice" name="rfa[request_type]"  style="width: 100%">
+                              <option value="rfa"> RFA </option>
+                              <option value="rfi"> RFI </option>
+                            </select>
+                          </div>
+                          <div class = "col-12 col-sm-6">
+                            <select class = "completed_choice" name="rfa[completed]"  style="width: 100%">
+                              <option value="true"> Yes </option>
+                              <option value="false"> No </option>
+                            </select>
+                          </div>
+                        </div> <br>
+
+                        <div class = "row">
+                          <div class = "col-12 col-sm-6">
+                            <%= form.label :number,"Number" %>
+                          </div>
+                          <div class = "col-12 col-sm-6">
+                            <%= form.label :rev,"Rev" %>
+                          </div>
+                        </div>
+                        <div class = "row">
+                          <div class = "col-12 col-sm-6">
+                            <%= form.text_field :number, class: "form-control"  %>
+                          </div>
+                          <div class = "col-12 col-sm-6">
+                            <%= form.text_field :rev, class: "form-control"  %>
+                          </div>
+                        </div> <br>
+
+                        <div class = "row">
+                          <div class = "col-12 col-sm-6">
+                            <%= form.label :reply_date, "Reply Date" %>
+
+                          </div>
+                          <div class = "col-12 col-sm-6">
+                          <%= form.label :issued_date, "Issued Date" %>
+                          </div>
+                        </div>
+                        <div class = "row">
+                          <div class = "col-12 col-sm-6">
+                             <div class="input-group date" id="datetimepicker8" data-target-input="nearest">
+                              <input name="rfa[reply_date]" value = "<%=if @rfa.reply_date
+                                              @rfa.reply_date.strftime('%d/%m/%y %I:%M %P') end %>" type="datetime" class="form-control datetimepicker-input" data-target="#datetimepicker8"/>
+                                <div class="input-group-append" data-target="#datetimepicker8" data-toggle="datetimepicker">
+                                  <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                </div>
+                            </div>
+
+                          </div>
+                          <div class = "col-12 col-sm-6">
+                            <div class="input-group date" id="datetimepicker5" data-target-input="nearest">
+                              <input name="rfa[issued_date]"  value = "<%=if @rfa.issued_date
+                                              @rfa.issued_date.strftime('%d/%m/%y %I:%M %P') end %>" type="datetime" class="form-control datetimepicker-input" data-target="#datetimepicker5"/>
+                                <div class="input-group-append" data-target="#datetimepicker5" data-toggle="datetimepicker">
+                                  <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                </div>
+                            </div>
+                          </div>
+                        </div> <br>
+
+
+                        <div class = "row">
+                          <div class = "col-12 col-sm-6">
+                            <%= form.label :required_reply_date, "Required reply Date" %>
+                          </div>
+
+                          <div class = "col-12 col-sm-6">
+                            <%= form.label :approval_date, "Approval Date" %>
+                          </div>
+                        </div>
+                        <div class = "row">
+                          <div class = "col-12 col-sm-6">
+                            <div class="input-group date" id="datetimepicker6" data-target-input="nearest">
+                              <input name="rfa[required_reply_date]" value = "<%=if @rfa.required_reply_date
+                                              @rfa.required_reply_date.strftime('%d/%m/%y %I:%M %P') end %>" type="datetime" class="form-control datetimepicker-input" data-target="#datetimepicker6"/>
+                                <div class="input-group-append" data-target="#datetimepicker6" data-toggle="datetimepicker">
+                                  <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                </div>
+                            </div>
+                        </div>
+
+                          <div class = "col-12 col-sm-6">
+                            <div class="input-group date" id="datetimepicker7" data-target-input="nearest">
+                              <input name="rfa[approval_date]" value = "<%=if @rfa.approval_date
+                                              @rfa.approval_date.strftime('%d/%m/%y %I:%M %P') end %>" type="datetime" class="form-control datetimepicker-input" data-target="#datetimepicker7"/>
+                                <div class="input-group-append" data-target="#datetimepicker7" data-toggle="datetimepicker">
+                                  <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                </div>
+                            </div>
+                          </div>
+                        </div> <br>
+
+
+                        <div class = "row">
+                          <div class = "col-12 col-sm-6">
+                            <%= form.label :to,"To" %>
+                          </div>
+                           <div class = "col-12 col-sm-6">
+                             <%= form.label :subject,"Subject" %>
+                          </div>
+                        </div>
+
+                        <div class = "row">
+                          <div class = "col-12 col-sm-6">
+                             <%= collection_select(:rfa, :to, User.all, :name, :name, {:prompt=> false}, {:multiple=> "multiple",:class=> "to_user_choice select2-container", :style =>"width: 100%"}) %>
+                          </div>
+                           <div class = "col-12 col-sm-6">
+                            <%= form.text_field :subject, class: "form-control"  %>
+
+                          </div>
+                        </div> <br>
+
+                        <div class = "row">
+                          <div class = "col-12 col-sm-6">
+                            <%= form.label :replied_by,"Replied By" %>
+                          </div>
+
+                          <div class = "col-12 col-sm-6">
+                            <%= form.label :days_lagging,"Days Lagging" %>
+                          </div>
+                        </div>
+                         <div class = "row">
+                          <div class = "col-12 col-sm-6">
+                            <%= collection_select(:rfa, :replied_by, User.all, :name, :name, {:prompt=> false}, {:multiple=> "multiple",:class=> "replied_user_choice select2-container", :style =>"width: 100%"}) %>
+                          </div>
+
+                          <div class = "col-12 col-sm-6">
+                            <%= form.text_field :days_lagging, class: "form-control" %>
+                          </div>
+                        </div> <br>
+
+                        <div class = "row">
+                          <div class = "col-12 col-sm-6">
+                            <%= form.label :count,"Count" %>
+                          </div>
+                          <div class = "col-12 col-sm-6">
+                            <%= form.label :sheet_name,"Type" %>
+
+
+                          </div>
+                        </div>
+                        <div class = "row">
+                          <div class = "col-12 col-sm-6">
+                            <%= form.text_field :count, class: "form-control" %>
+                          </div>
+                          <div class = "col-12 col-sm-6">
+                             <%= form.text_field :sheet_name, class: "form-control" %>
+
+                          </div>
+                        </div> <br>
+                        <div class = "row">
+                          <div class = "col-12 col-sm-6">
+                            <%= form.label :remarks,"Remarks" %>
+                          </div>
+                          <div class = "col-12 col-sm-6">
+                          <%= form.label :emailed_to,"Emailed To" %>
+                          </div>
+                        </div>
+                         <div class = "row">
+                          <div class = "col-12 col-sm-6">
+                            <%= form.text_field :remarks, class: "form-control" %>
+                          </div>
+                          <div class = "col-12 col-sm-6">
+                            <%= collection_select(:rfa, :emailed_to, User.all, :name, :name, {:prompt=> false}, {:multiple=> "multiple",:class=> "emailed_user_choice select2-container", :style =>"width: 100%"}) %>
+                          </div>
+                        </div> <br>
+
+                        <div class = "row">
+                          <div class = "col-12 col-sm-6">
+                            <%= form.label :gridline,"Gridline" %>
+                          </div>
+                          <div class = "col-12 col-sm-6">
+                            <%= form.label :status, "Status"%>
+                          </div>
+                        </div>
+                        <div class = "row">
+                          <div class = "col-12 col-sm-6">
+                            <%= form.text_field :gridline, class: "form-control" %>
+                          </div>
+                          <div class = "col-12 col-sm-6">
+                            <select class = "status_choice" name="rfa[status]"  style="width: 100%">
+                              <option value="PENDING"> PENDING </option>
+                              <option value="APPROVED"> APPROVED </option>
+                              <option value="APPROVED WITH COMMENTS"> APPROVED WITH COMMENTS </option>
+                              <option value="NOT APPROVED"> NOT APPROVED </option>
+                              <option value="LAGGING"> LAGGING </option>
+                            </select>
+                          </div>
+                        </div> <br>
+                         <div class = "row">
+                          <div class = "col-12 col-sm-12">
+                             <%= form.label :transmittal_advice,"Transmittal Advice" %>
+                          </div>
+                             <div class = "col-12 col-sm-12">
+                                <%= form.text_area :transmittal_advice, :class => "tinymce form-control", :rows => 40, :cols => 120 %>
+                                <%= tinymce %>
+                          </div>
+
+                        </div> <br>
+
+
+
+                        <span class = "row">
+                          <span class = "col col-sm">
+                            <%= form.label :attachment,"Attachments " %>
+                             <% @rfa.attachments.each do |attachment| %>
+                              <span class="level">
+                                <%= link_to attachment.blob.filename, rails_blob_path(attachment, only_path: true), class: 'button is-primary is-big' %>
+                                <%= link_to "", delete_attachment_rfa_url(attachment), method: :delete, data: { confirm: 'Are you sure?' }, class:'fa fa-remove' %>
+                              </span>
+                            <% end %>
+                          </span>
+                        </span> <br>
+                        <div class = "row">
+                          <div class = "col col-sm">
+                            <%= form.drag_and_drop_file_field :attachments, disable: false do %>
+                            Click or Drag Attachments Here
+                            <% end %>
+                          </div>
+                      </div>
+
+                  <br>
+                  <div class = "row modal-footer">
+                    <div class = "col">
+                      <%= form.submit "update", class: "btn btn-default btn-success float-left" %>
+                      <%end%>
+                    </div>
+                    <div class = "col">
+                      <%= button_to "Back", rfas_path, action: "index" , method: :get, class:"btn btn-default btn-secondary float-right " %>
+                    </div>
+
+                  </div>
+
+            </div>
+        </div>
+
+    <script type="text/javascript">
+
+
+                      /* Set the width of the side navigation to 250px */
+                function openNav() {
+                  document.getElementById("mySidenav").style.width = "250px";
+                  document.getElementById("main").style.opacity = "0.5";
+                  document.getElementById("header").style.opacity = "0.5";
+                  document.getElementById("main").addEventListener("click",closeNav);
+                }
+
+                /* Set the width of the side navigation to 0 */
+                function closeNav() {
+                  document.getElementById("mySidenav").style.width = "0";
+                  document.getElementById("main").style.opacity = "1";
+                  document.getElementById("header").style.opacity = "1";
+                }
+
+
+               $(document).ready(function () {
+                $('.project_choice').select2({
+                  width : 'resolve'});
+                $('.project_choice').val("<%= @rfa.project_id %>");
+                $('.project_choice').trigger('change');
+
+                $('.to_user_choice').select2({
+                  width : 'resolve'});
+                $('.to_user_choice').val("<%= @rfa.to %>");
+                $('.to_user_choice').trigger('change');
+
+                $('.replied_user_choice').select2({
+                  width : 'resolve'});
+                $('.replied_user_choice').val("<%= @rfa.replied_by %>");
+                $('.replied_user_choice').trigger('change');
+
+                $('.emailed_user_choice').select2({
+                  width : 'resolve'});
+                $('.emailed_user_choice').val("<%= @rfa.emailed_to %>");
+                $('.emailed_user_choice').trigger('change');
+
+                $('.rfa_rfi_choice').select2({
+                  width : 'resolve'});
+                $('.rfa_rfi_choice').val("<%= @rfa.request_type %>");
+                $('.rfa_rfi_choice').trigger('change');
+
+                $('.trade_choice').select2({
+                  width : 'resolve'});
+                $('.trade_choice').val("<%= @rfa.trade %>");
+                $('.trade_choice').trigger('change');
+
+                $('.completed_choice').select2({
+                  width : 'resolve'});
+                $('.completed_choice').val("<%= @rfa.completed %>");
+                $('.completed_choice').trigger('change');
+
+                $('.status_choice').select2({
+                  width : 'resolve'});
+                $('.status_choice').val("<%= @rfa.status %>");
+                $('.status_choice').trigger('change');
+
+                $('#datetimepicker5').datetimepicker({ format: 'YYYY-MM-DD HH:mm'});
+                $('#datetimepicker6').datetimepicker({ format: 'YYYY-MM-DD HH:mm'});
+                $('#datetimepicker7').datetimepicker({ format: 'YYYY-MM-DD HH:mm'});
+                $('#datetimepicker8').datetimepicker({ format: 'YYYY-MM-DD HH:mm'});
+
+
+
+     });
+
+    </script>
+
+    </body>
+
+
+
+
+

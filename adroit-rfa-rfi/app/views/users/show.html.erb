@@ -1,0 +1,13 @@
+
+<p>
+  <strong>Name:</strong>
+  <%= @user.name %>
+</p>
+
+<p>
+  <strong>Role:</strong>
+  <%= @user.role %>
+</p>
+
+
+ <%= link_to " Delete", user_path(@user), method: :delete, data:{confirm: 'Are you sure?'}, class: "dropdown-item fa fa-warning"%>

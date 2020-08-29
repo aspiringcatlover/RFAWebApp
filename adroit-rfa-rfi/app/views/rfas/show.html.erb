@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html>
+
+<style>
+  /* The side navigation menu */
+.sidenav {
+  height: 100%; /* 100% Full-height */
+  width: 0; /* 0 width - change this with JavaScript */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Stay on top */
+  top: 0; /* Stay at the top */
+  left: 0;
+  background-color: #174485; /* Black*/
+  overflow-x: hidden; /* Disable horizontal scroll */
+  padding-top: 60px; /* Place content 60px from the top */
+  transition: 0.5s; /* 0.5 second transition effect to slide in the sidenav */
+}
+
+/* The navigation menu links */
+.sidenav a {
+  padding: 8px 8px 8px 32px;
+  text-decoration: none;
+  font-size: 25px;
+  color: white;
+  display: block;
+  transition: 0.3s;
+}
+
+/* When you mouse over the navigation links, change their color */
+.sidenav a:hover {
+  color: #f1f1f1;
+}
+
+/* Position and style the close button (top right corner) */
+.sidenav .closebtn {
+  position: absolute;
+  top: 0;
+  right: 25px;
+  font-size: 36px;
+  margin-left: 50px;
+}
+
+/* Style page content - use this if you want to push the page content to the right when you open the side navigation */
+#main {
+  transition: margin-left .5s;
+  padding: 20px;
+}
+
+/* On smaller screens, where height is less than 450px, change the style of the sidenav (less padding and a smaller font size) */
+@media screen and (max-height: 450px) {
+  .sidenav {padding-top: 15px;}
+  .sidenav a {font-size: 18px;}
+}
+
+/* set the width of content to fill the screen more */
+@media (min-width: 1200px) {
+    .container-fluid{
+        max-width: 1800px;
+    }
+    .container{
+      max-width: 1800px;
+    }
+}
+
+
+
+
+</style>
+
+    <body>
+
+        <div id="mySidenav" class="sidenav">
+            <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+            <a href="/rfas">RFA and RFI</a>
+            <a style="font-weight: 100" href="/projects">Projects</a>
+            <a style="font-weight: 100" href="/users">Users</a>
+            <a style="font-weight: 100" href="/dashboard">RFA Dashboard</a>
+            <a style="font-weight: 100" href="/project_dashboard">Project Dashboard</a>
+        </div>
+
+        <!-- header -->
+        <div class="topnav" id = "header" style = "background-color: #174485;height: 100px !important;">
+          <a class="active" href="#adroit" style = "color: white; position: relative; left: 320px; top: 30px" >Adroit</a>
+          <span style=" color:white;font-size:25px;cursor:pointer;position: relative; left: 330px; top: 34px"  onclick="openNav()">&#9776;</span>
+        </div>
+
+        <br>
+
+        <div class ="container" id="main">
+        <br>
+
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb">
+             <li class="breadcrumb-item" style = "color: #174485"><a href="<%= rfas_path %>"> Home </a></li>
+            <li class="breadcrumb-item active" aria-current="page"><%=@rfa.ref%> </li>
+          </ol>
+        </nav>
+
+            <div class = "row">
+                <div class = "col-8 col-sm-8">
+                    <h1 style = "color : #174485;width: 100%; display:inline;text-align:left"><%=@rfa.ref%> <% if @rfa.is_latest %>(Latest Revision) <%end%></h1>
+                </div>
+                <div class = "col-4 col-sm-4">
+                    <div class="btn-group dropdown float-right" style = "position:relative; top:10px;">
+                        <button class="btn btn-secondary dropdown-toggle float-right" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">More</button>
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                          <%= link_to " Edit", edit_rfa_path(@rfa), class: "dropdown-item fa fa-edit"%>
+                          <%= link_to " Delete", rfa_path(@rfa), method: :delete, data:{confirm: 'Are you sure?'}, class: "dropdown-item fa fa-warning"%>
+                          <%= link_to " Reject", reject_rfa_rfa_url(@rfa), method: :put, data:{confirm: "Are you sure?"}, class: "dropdown-item fa fa-times"%>
+                          <%= link_to " Delete all old revisions", remove_old_revisions_rfa_url(@rfa), method: :delete, data:{confirm: 'Are you sure?'}, class: "dropdown-item fa fa-exclamation-circle"%>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br> <br>
+            <div class="row">
+                <div class = "col-12 col-sm-6">
+                    <strong>Project:   </strong> <%=@rfa.project.title%>
+                </div>
+               <div class = "col-6">
+                    <strong>Trade:   </strong> <%=@rfa.trade%>
+              </div>
+            </div> <br>
+
+            <div class="row">
+                <div class = "col-6">
+                    <strong>Type:   </strong> <%=@rfa.sheet_name%>
+                </div>
+                <div class = "col-6">
+                    <strong>Rev:   </strong> <%=@rfa.rev%>
+                </div>
+            </div> <br>
+
+            <div class="row">
+                <div class = "col-6">
+                    <strong>Subject:   </strong> <%=@rfa.subject%>
+                </div>
+                <div class = "col-6">
+                    <strong>Issued Date:   </strong> <%= if @rfa.issued_date
+                      @rfa.issued_date.strftime("%d/%m/%y %I:%M %P")
+                end %>
+                </div>
+            </div> <br>
+
+            <div class="row">
+                <div class = "col-6">
+                    <strong>Required Reply Date:   </strong> <%= if @rfa.required_reply_date
+                      @rfa.required_reply_date.strftime("%d/%m/%y %I:%M %P")
+                end %>
+                </div>
+                <div class = "col-6">
+                    <strong>To:   </strong> <%=@rfa.to%>
+                </div>
+            </div> <br>
+
+             <div class="row">
+                <div class = "col-6">
+                    <strong>Reply Date:   </strong> <%= if @rfa.reply_date
+                      @rfa.reply_date.strftime("%d/%m/%y %I:%M %P")
+                end %>
+                </div>
+                <div class = "col-6">
+                    <strong>Approval Date:   </strong> <%= if @rfa.approval_date
+                      @rfa.approval_date.strftime("%d/%m/%y %I:%M %P")
+                end %>
+                </div>
+            </div> <br>
+
+            <div class="row">
+                <div class = "col-6">
+                    <strong>Replied By:   </strong> <%=@rfa.replied_by%>
+                </div>
+                <div class = "col-6">
+                    <strong>Status:   </strong> <%=@rfa.status%>
+                </div>
+            </div> <br>
+
+            <div class="row">
+                <div class = "col-6">
+                    <strong>Days Lagging:   </strong> <%=@rfa.days_lagging%>
+                </div>
+                <div class = "col-6">
+                    <strong>Count:   </strong> <%=@rfa.count%>
+                </div>
+            </div> <br>
+
+            <div class="row">
+                <div class = "col-6">
+                    <strong>Transmittal Advice:   </strong> <%=@rfa.transmittal_advice%>
+                </div>
+                <div class = "col-6">
+                    <strong>Remarks:   </strong> <%=@rfa.remarks%>
+                </div>
+            </div> <br>
+
+            <div class="row">
+                <div class = "col-6">
+                    <strong>Emailed To:   </strong> <%=@rfa.emailed_to%>
+                </div>
+                <div class = "col-6">
+                    <strong>Gridline:   </strong> <%=@rfa.gridline%>
+                </div>
+            </div> <br>
+
+            <div class = "row">
+                <div class = "col-6 col-sm-6">
+                    <strong>completed:   </strong> <%=  if @rfa.completed?
+                                                          "Yes"
+                                                        else
+                                                          "No"
+                                                        end %>
+                </div>
+                <div class = "col-6 col-sm-6">
+                  <strong>Number:   </strong> <%=@rfa.number%>
+                </div>
+              </div> <br>
+              <div class = "row">
+                <div class = "col-6">
+                    <STRONG>Attachments: </STRONG> <br><br>
+                    <ol>
+                    <% @rfa.attachments.each do |attachment| %>
+                        <div>
+                          <% if attachment.previewable? %>
+                            <li><%= link_to image_tag(attachment.preview(resize: "200x200")),  rails_blob_path(attachment, disposition: "inline"), target: :_blank %></li>
+                          <% elsif attachment.variable? %>
+                            <li><%= link_to(image_tag(attachment.variant(resize: "200x200")), rails_blob_path(attachment, disposition: "inline"))%> </li>
+                          <% else %>
+                            <li><%= link_to attachment.blob.filename, rails_blob_path(attachment, disposition: "inline"), target: :_blank %> </li>
+                          <% end %>
+                        </div> <br>
+                    <% end %>
+                    </ol>
+                    <% if @rfa.attachments.first.nil? %>
+                      No attachments
+                    <% end %>
+                </div>
+            </div> <br>
+
+            <div class="row">
+                 <div class="col"><%= button_to "Back", rfas_path, action: "index" , method: :get, class:"btn btn-primary btn-success "%> </div>
+            </div>
+
+        </div>
+
+    </body>
+</html>
+
+        <% if flash[:reject] %>
+                  <script>
+                    toastr["success"]("New revision of RFA created!", "Success");
+                  </script>
+        <% end %>
+        <% if flash[:remove_old_rev] %>
+                  <script>
+                    toastr["success"]("All old revisions deleted!", "Success");
+                  </script>
+        <% end %>
+        <% if flash[:updated] %>
+                  <script>
+                    toastr["success"]("RFA Updated", "Success");
+                  </script>
+        <% end %>
+
+
+<script>
+            /* Set the width of the side navigation to 250px */
+                function openNav() {
+                  document.getElementById("mySidenav").style.width = "250px";
+                  document.getElementById("main").style.opacity = "0.5";
+                  document.getElementById("header").style.opacity = "0.5";
+                  document.getElementById("main").addEventListener("click",closeNav);
+                }
+
+                /* Set the width of the side navigation to 0 */
+                function closeNav() {
+                  document.getElementById("mySidenav").style.width = "0";
+                  document.getElementById("main").style.opacity = "1";
+                  document.getElementById("header").style.opacity = "1";
+                }
+
+</script>

@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html>
+
+    <style>
+      /* The side navigation menu */
+    .sidenav {
+      height: 100%; /* 100% Full-height */
+      width: 0; /* 0 width - change this with JavaScript */
+      position: fixed; /* Stay in place */
+      z-index: 1; /* Stay on top */
+      top: 0; /* Stay at the top */
+      left: 0;
+      background-color: #174485; /* Black*/
+      overflow-x: hidden; /* Disable horizontal scroll */
+      padding-top: 60px; /* Place content 60px from the top */
+      transition: 0.5s; /* 0.5 second transition effect to slide in the sidenav */
+    }
+
+    /* The navigation menu links */
+    .sidenav a {
+      padding: 8px 8px 8px 32px;
+      text-decoration: none;
+      font-size: 25px;
+      color: white;
+      display: block;
+      transition: 0.3s;
+    }
+
+    /* When you mouse over the navigation links, change their color */
+    .sidenav a:hover {
+      color: #f1f1f1;
+    }
+
+    /* Position and style the close button (top right corner) */
+    .sidenav .closebtn {
+      position: absolute;
+      top: 0;
+      right: 25px;
+      font-size: 36px;
+      margin-left: 50px;
+    }
+
+    /* Style page content - use this if you want to push the page content to the right when you open the side navigation */
+    #main {
+      transition: margin-left .5s;
+      padding: 20px;
+    }
+
+    /* On smaller screens, where height is less than 450px, change the style of the sidenav (less padding and a smaller font size) */
+    @media screen and (max-height: 450px) {
+      .sidenav {padding-top: 15px;}
+      .sidenav a {font-size: 18px;}
+    }
+
+    table.dataTable td {
+    padding: 3px 10px;
+    width: 1px;
+    white-space: nowrap;
+    }
+
+    /* set the width of content to fill the screen more */
+    @media (min-width: 1200px) {
+        .container-fluid{
+            max-width: 1800px;
+        }
+        .container{
+          max-width: 1800px;
+        }
+    }
+    </style>
+
+    <div id="mySidenav" class="sidenav">
+      <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+      <a style="font-weight: 100" href="/rfas">RFA and RFI</a>
+      <a style="font-weight: 100" href="/projects">Projects</a>
+      <a style="font-weight: 100" href="/users">Users</a>
+      <a href="/dashboard">RFA Dashboard</a>
+      <a style="font-weight: 100" href="/project_dashboard">Project Dashboard</a>
+    </div>
+
+    <head>
+    <!-- import echarts-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/4.6.0/echarts-en.min.js"></script>
+    </head>
+
+
+    <body id = "body">
+
+        <!-- header -->
+        <div class="topnav" id = "header" style = "background-color: #174485;height: 100px !important;">
+          <a class="active" href="#adroit" style = "color: white; position: relative; left: 320px; top: 30px" >Adroit</a>
+           <span style=" color:white;font-size:25px;cursor:pointer;position: relative; left: 330px; top: 34px"  onclick="openNav()">&#9776;</span>
+        </div>
+
+
+
+
+
+        <div class="container-fluid" id="main">  <br> <br>
+
+                  <!-- bootstrap breadcrumb -->
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                     <li class="breadcrumb-item" style = "color: #174485"><a href="<%= rfas_path %>"> Home </a></li>
+                    <li class="breadcrumb-item active" aria-current="dashboard">RFA Dashboard </li>
+                </ol>
+            </nav>
+
+              <STRONG style = "font-size: 25px; color : #174485"><h1>Dashboard</h1></STRONG> <br>
+
+            <div class = "container-fluid">
+              <div class = "row">
+                <div class = "col-3 text-center" style= "border-style: groove;">
+                    <h2>Cases Lagging</h2>
+                    <div style = "font-size: 50px; color:orange">
+                      <%= @rfas.where(status: "LAGGING").count %> <i class = "fas fa-exclamation-triangle"></i>
+                    </div>
+                </div>
+
+                <div class = "col-3 text-center offset-1" style= "border-style: groove;">
+                    <h2>Cases Open</h2>
+                    <div style = "font-size: 50px; color:blue">
+                      <%= @rfas.where(completed: false).count %> <i class = "far fa-file-alt"></i>
+                    </div>
+                </div>
+
+                <div class = "col-3 text-center offset-1" style= "border-style: groove;">
+                    <h2>Cases Closed</h2>
+                    <div style = "font-size: 50px; color:green">
+                      <%= @rfas.where(completed: true).count %> <i class = "fas fa-check-circle"></i>
+                    </div>
+                </div>
+              </div>
+            </div> <br><br>
+
+            <div class = "row">
+                <div class = "col-6">
+                    <!-- prepare a DOM container with width and height -->
+                    <div id="lagging_rfa_pie" style="width: 600px;height:400px;"></div>
+                </div>
+                <div class = "col-6">
+                      <!-- prepare a DOM container with width and height -->
+                     <div id="lagging_gantt_chart" style="width: 600px;height:400px;"></div>
+                </div>
+            </div>
+            <div class = "row">
+              <div class = "col-12">
+                <!-- prepare a DOM container with width and height -->
+                <div id = "aging_bar_graph" style = "width: 1500px; height:400px;"></div>
+              </div>
+            </div>
+        </div>
+
+          <script src = "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.1/js/all.min.js"></script>
+
+
+           <script type="text/javascript">
+
+
+
+                  /* Set the width of the side navigation to 250px */
+                function openNav() {
+                  document.getElementById("mySidenav").style.width = "250px";
+                  document.getElementById("main").style.opacity = "0.5";
+                  document.getElementById("header").style.opacity = "0.5";
+
+                    document.getElementById("main").addEventListener("click",closeNav);
+                }
+                /* Set the width of the side navigation to 0 */
+                function closeNav() {
+                  document.getElementById("mySidenav").style.width = "0";
+                  document.getElementById("main").style.opacity = "1";
+                  document.getElementById("header").style.opacity = "1";
+                }
+
+
+                //rfa pie chart
+                var myChart = echarts.init(document.getElementById('lagging_rfa_pie'));
+                var laggingRFA = <%= raw @rfas.to_json%>.filter(x => x.status === "LAGGING");
+                var pendingRFA = <%= raw @rfas.to_json%>.filter(x => x.status === "PENDING");
+                var approvedRFA = <%= raw @rfas.to_json%>.filter(x => (x.status === "APPROVED"|| x.status ==="APPROVED WITH COMMENTS"));
+                var notApprovedRFA = <%= raw @rfas.to_json%>.filter(x => x.status === "NOT APPROVED");
+                // specify chart configuration item and data
+                var option = {
+                    title:{text: "Cases Breakdown", align: "center"},
+                    series:[{ name: "Lagging RFAs",
+                            data: [{value: laggingRFA.length, name: "Lagging"},
+                                   {value: pendingRFA.length, name: "Pending"},
+                                   {value: approvedRFA.length, name: "Approved"},
+                                   {value: notApprovedRFA.length, name: "Not Approved"}
+                                  ],
+                            type: 'pie'}]
+                    };
+                    // use configuration item and data specified to show chart
+                    myChart.setOption(option);
+
+
+                //rfa gantt chart for lagging cases
+                var myChart2 = echarts.init(document.getElementById('lagging_gantt_chart'));
+
+                //construct dataset for y-axis
+                ref_array = [];
+                for (i = 0 ; i < laggingRFA.length; i++)
+                    {ref_array[i] = laggingRFA[i]["ref"]};
+                console.log(ref_array);
+
+                //construct coresponding lagging values for the ref_array
+                lagging_days_array = [];
+                for (i = 0; i < laggingRFA.length; i++)
+                {
+                    lagging_days_array[i] = laggingRFA[i]["days_lagging"];
+                }
+                console.log(lagging_days_array);
+
+                var option1 = {
+                title: {
+                    text: 'Lagging Cases',
+                    subtext:""
+                },
+                tooltip: {
+                    trigger: 'axis',
+                    axisPointer: {
+                        type: 'shadow'
+                    }
+                },
+                legend: {
+                    data: ['Days Lagged']
+                },
+                grid: {
+                    left: '3%',
+                    right: '4%',
+                    bottom: '3%',
+                    containLabel: true
+                },
+                xAxis: {
+                    type: 'value',
+                    boundaryGap: [0, 0.01],
+                    position: 'top'
+                },
+
+                yAxis: {
+                    type: 'category',
+                    data: ref_array
+                },
+
+                series: [
+                    {
+                        name: 'Days Lagged',
+                        type: 'bar',
+                        data: lagging_days_array
+                    },
+
+                ]
+                };
+                myChart2.setOption(option1);
+
+
+                var myChart3 = echarts.init(document.getElementById('aging_bar_graph'));
+
+                var allRFACount = <%= raw @rfas.to_json%>.length;
+                var laggingPercentage = ((<%= raw @rfas.to_json%>.filter(x => x.status === "LAGGING").length/allRFACount)*100).toFixed(2);
+                var pendingPercentage = ((<%= raw @rfas.to_json%>.filter(x => x.status === "PENDING").length/allRFACount)*100).toFixed(2);
+                var approvedPercentage = ((<%= raw @rfas.to_json%>.filter(x => (x.status === "APPROVED"|| x.status ==="APPROVED WITH COMMENTS")).length/allRFACount)*100).toFixed(2);
+                var notApprovedPercentage = ((<%= raw @rfas.to_json%>.filter(x => x.status === "NOT APPROVED").length/allRFACount)*100).toFixed(2);
+
+                var lessThan15DaysLag = 0
+                var between15and30DaysLag = 0
+                var moreThan30DaysLag = 0
+
+                for (x = 0; x < lagging_days_array.length ; x++){
+                  if (lagging_days_array[x] < 15)
+                    lessThan15DaysLag += 1;
+                  else if (lagging_days_array[x] <= 30)
+                    between15and30DaysLag +=1;
+                  else
+                    moreThan30DaysLag +=1;
+                }
+
+                lessThan15DaysPercentage = ((lessThan15DaysLag/allRFACount)*100).toFixed(2);
+                between15and30DaysPercentage = ((between15and30DaysLag/allRFACount)*100).toFixed(2);
+                moreThan30DaysPercentage = ((moreThan30DaysLag/allRFACount)*100).toFixed(2);
+                var option2 = {
+                    title: {
+                    text: 'Percentage of Cases %',
+                    subtext:""
+                },
+
+                label:{
+                  show: true,
+                  position: "top",
+                 formatter: function (params) {
+                      return params.value + "%";
+                  }
+                },
+
+                  xAxis: {
+                    type: 'category',
+                    data: ['Approved', 'Pending', 'Not Approved', 'Lagging: <15 Days', 'Lagging: 15-30 Days', 'Lagging: >1 Month']
+                  },
+                  yAxis: {
+                      type: 'value'
+                  },
+                  series: [{
+                      name: "data",
+                      data: [
+                              {value: approvedPercentage, itemStyle: {color: 'green'}},
+                              {value: pendingPercentage, itemStyle: {color: 'blue'}},
+                              {value: notApprovedPercentage, itemStyle: {color: 'grey'}},
+                              {value: lessThan15DaysPercentage, itemStyle: {color: 'yellow'}},
+                              {value: between15and30DaysPercentage, itemStyle: {color: 'orange'}},
+                              {value: moreThan30DaysPercentage, itemStyle: {color: 'red'}}
+                            ],
+                      type: 'bar',
+                          }]
+
+                            };
+
+                myChart3.setOption(option2);
+
+
+
+
+                </script>
+
+    </body>
+</html>

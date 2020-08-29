@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+
+<style>
+
+.field_with_errors {
+  color:red;
+
+}
+
+#error_explanation {
+  border-style: solid;
+  border-color: red;
+}
+</style>
+
+
+<html>
+
+  <body>
+    <div class = "container" style = "font-weight : bold !important">
+        <div class="modal-header">
+          <h1 class = "modal-title" style = "color : #174485;width: 100%; display:inline;text-align:left">Create New RFA/RFI</h1>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">x</button>
+        </div>
+
+      <%= form_with scope: :rfa, url: rfas_path, local: true do |form| %>
+
+        <% if @rfa.errors.any? %>
+          <div id="error_explanation">
+            <h2 style = "color: red"><%= pluralize(@rfa.errors.count, "error") %> prohibited this RFA from being saved:</h2>
+
+            <ul>
+            <% @rfa.errors.full_messages.each do |msg| %>
+              <li><%= msg.split(' ')[1..-1].join(' ') %></li>
+            <% end %>
+            </ul>
+          </div>
+        <% end %>
+
+        <div class = "row">
+          <div class = "col-12 col-md-6 col-sm-6 col-xs-12">
+            <%= form.label :project, "Project" %>
+          </div>
+          <div class = "col-12 col-md-6 col-sm-6 col-xs-12">
+             <%= form.label :trade ,"Trade"%>
+          </div>
+        </div>
+
+        <div class = "row">
+          <div class = "col-12 col-md-6 col-sm-6 col-xs-12">
+              <%= collection_select(:rfa, :project_id, Project.all, :id, :title, {:prompt=> false}, {:class=> "project_choice select2-container form-control", :style =>"width: 100%"}) %>
+          </div>
+          <div class = "col-12 col-md-6 col-sm-6 col-xs-12">
+            <select class = "trade_choice select2-container form-control" name="rfa[trade]"  style="width: 100%;">
+              <option class = "select2-choice" value="MEP" selected="selected"> MEP </option>
+              <option  class = "select2-choice" value="ID"> ID </option>
+              <option  class = "select2-choice" value="CS"> CS </option>
+            </select>
+          </div>
+        </div> <br>
+
+        <div class = "row">
+          <div class = "col-12 col-sm-6 col-xs-6">
+            <%= form.label :request_type, "Request Type"%>
+          </div>
+          <div class = "col-12 col-sm-6 col-xs-6">
+            <%= form.label :sheet_name, "Type"%>
+          </div>
+        </div>
+
+        <div class = "row">
+          <div class = "col-12 col-sm-6 col-xs-6">
+            <select class = "rfa_rfi_choice select2-container form-control" name="rfa[request_type]"  style="width: 100%;">
+              <option class = "select2-choice" value="rfa" selected="selected"> RFA </option>
+              <option  class = "select2-choice" value="rfi"> RFI </option>
+            </select>
+          </div>
+          <div class = "col-12 col-sm-6 col-xs-6 " >
+            <%= form.text_field :sheet_name, class: "form-control" %>
+          </div>
+        </div> <br>
+
+        <div class = "row">
+          <div class = "col-12 col-sm-6 col-xs-6">
+            <%= form.label :number,"Number" %>
+          </div>
+          <div class = "col-12 col-sm-6 col-xs-6">
+            <%= form.label :required_reply_date, "Required reply Date"%>
+          </div>
+        </div>
+
+        <div class = "row">
+          <div class = "col-12 col-sm-6 col-xs-6">
+            <%= form.text_field :number, class: "form-control"  %>
+          </div>
+          <div class = "col-12 col-sm-6 col-xs-6">
+            <div class="input-group date" id="datetimepicker2" data-target-input="nearest">
+              <input name="rfa[required_reply_date]" type="datetime" class="form-control datetimepicker-input" data-target="#datetimepicker2"/>
+                <div class="input-group-append" data-target="#datetimepicker2" data-toggle="datetimepicker">
+                  <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                </div>
+            </div>
+          </div>
+        </div> <br>
+
+
+        <div class = "row">
+          <div class = "col-12 col-sm-6 col-xs-6">
+            <%= form.label :to,"To" %>
+          </div>
+           <div class = "col-12 col-sm-6 col-xs-6">
+           <%= form.label :subject,"Subject" %>
+          </div>
+        </div>
+
+        <div class = "row">
+          <div class = "col-12 col-sm-6 col-xs-6">
+            <%= form.fields_for :email_lists do |f| %>
+              <%= f.collection_select :user_id, User.all, :id, :name, {:prompt=> false,include_hidden: false}, {:multiple=> "multiple", :class=> "to_user_choice select2-container", :style =>"width: 100%"} %>
+            <% end %>
+          </div>
+           <div class = "col-12 col-sm-6 col-xs-6">
+            <%= form.text_field :subject, class: "form-control" %>
+          </div>
+        </div> <br>
+
+        <div class = "row">
+          <div class = "col-12 col-sm-6 col-xs-6">
+            <%= form.label :remarks,"Remarks" %>
+          </div>
+
+          <div class = "col-12 col-sm-6 col-xs-6">
+            <%= form.label :days_lagging,"Days Lagging" %>
+          </div>
+        </div>
+
+         <div class = "row">
+          <div class = "col-12 col-sm-6 col-xs-6">
+            <%= form.text_field :remarks, class: "form-control" %>
+          </div>
+
+          <div class = "col-12 col-sm-6 col-xs-6">
+            <%= form.text_field :days_lagging, class: "form-control" %>
+          </div>
+        </div> <br>
+
+        <div class = "row">
+          <div class = "col-12 col-sm-6 col-xs-6">
+            <%= form.label :count,"Count" %>
+          </div>
+          <div class = "col-12 col-sm-6 col-xs-6">
+            <%= form.label :completed ,"Completed"%>
+
+          </div>
+        </div>
+        <div class = "row">
+          <div class = "col-12 col-sm-6 col-xs-6">
+            <%= form.text_field :count, class: "form-control" %>
+          </div>
+          <div class = "col-12 col-sm-6 col-xs-6">
+            <select class = "completed_choice" name="rfa[completed]"  style="width: 100%">
+              <option value="true"> Yes </option>
+              <option value="false" selected="selected">No </option>
+            </select>
+          </div>
+        </div> <br>
+
+
+        <div class = "row">
+          <div class = "col-12 col-sm-6 col-xs-6">
+            <%= form.label :gridline,"Gridline" %>
+          </div>
+          <div class = "col-12 col-sm-6 col-xs-6">
+            <%= form.label :status, "Status"%>
+          </div>
+        </div>
+
+        <div class = "row">
+          <div class = "col-12 col-sm-6 col-xs-6">
+            <%= form.text_field :gridline, class: "form-control" %>
+          </div>
+          <div class = "col-12 col-sm-6 col-xs-6">
+            <select class = "status_choice" name="rfa[status]"  style="width: 100%">
+              <option value="PENDING" selected="selected"> PENDING </option>
+              <option value="APPROVED"> APPROVED </option>
+              <option value="APPROVED WITH COMMENTS"> APPROVED WITH COMMENTS </option>
+              <option value="NOT APPROVED"> NOT APPROVED </option>
+              <option value="LAGGING"> LAGGING </option>
+            </select>
+          </div>
+        </div> <br>
+
+         <div class = "row">
+          <div class = "col-12 col-sm-12 col-xs-12">
+             <%= form.label :transmittal_advice,"Transmittal Advice" %>
+          </div>
+           <div class = "col-12 col-sm-12 col-xs-12">
+            <%= form.text_area :transmittal_advice, :class => "tinymce form-control", :rows => 40, :cols => 120 %>
+            <%= tinymce %>
+
+          </div>
+        </div> <br>
+
+
+
+        <div class = "row">
+          <div class = "col col-sm">
+            <%= form.label :attachments,"Upload Attachments" %>
+          </div>
+        </div>
+        <div class = "row">
+          <div class = "col col-sm">
+            <%= form.file_field :attachments, multiple: true%>
+          </div>
+        </div>
+        <br>
+        <div class = "row modal-footer">
+          <div class = "col">
+            <%= form.submit "Submit", class: "btn btn-default btn-success float-left", id: "submit_button", data: {disable_with: false} %>
+          </div>
+            <% end %>
+          <br>
+          <div class ="col">
+            <%= button_to "Back", rfas_path, action: "index" , method: :get, class:"btn btn-default btn-danger float-right " %>
+          </div>
+
+        </div>
+    </div>
+
+
+    <script type="text/javascript">
+
+      //document.getElementById("submit_button").disabled = false;
+
+     $(document).ready(function () {
+
+
+      $('.project_choice').select2({
+        width : 'resolve'});
+      $('.trade_choice').select2({
+        width : 'resolve'});
+      $('.to_user_choice').select2({
+        width : 'resolve'});
+      $('.replied_user_choice').select2({
+        width : 'resolve'});
+      $('.emailed_user_choice').select2({
+        width : 'resolve'});
+      $('.rfa_rfi_choice').select2({
+        width : 'resolve',
+        height: 'auto'});
+      $('.completed_choice').select2({
+        width : 'resolve'});
+       $('.status_choice').select2({
+        width : 'resolve'});
+      $('#datetimepicker1').datetimepicker({ format: 'YYYY-MM-DD HH:mm A'});
+      $('#datetimepicker2').datetimepicker({ format: 'YYYY-MM-DD HH:mm A'});
+      $('#datetimepicker3').datetimepicker({ format: 'YYYY-MM-DD HH:mm A'});
+      $('#datetimepicker4').datetimepicker({ format: 'YYYY-MM-DD HH:mm A'});
+
+    })
+
+
+
+    </script>
+  </body>
+</html>
+
+
+

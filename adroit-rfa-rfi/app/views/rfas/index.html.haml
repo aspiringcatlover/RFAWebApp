@@ -1,0 +1,23 @@
+!!!
+%html
+  %body
+    .container.mb-3.mt-3
+      %h1 Listing RFAs/RFIs
+      = link_to 'New RFAs/RFIs', new_rfa_path
+      %table#mydatatable.table.table-striped.table-bordered
+        %thead
+          %tr
+            %th Ref
+            %th Project
+            %th
+        %tbody
+          - @rfas.each do |rfa|
+            %tr
+              %td= rfa.ref
+              %td= rfa.project
+              %td= link_to 'Show', rfa_path(rfa)
+    :javascript
+      $(document).ready(function() {
+                          $.noConflict();
+                          var table = $("#mydatatable").DataTable();
+                    });
